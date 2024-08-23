@@ -33,19 +33,17 @@ class Motor:
             self.serial_no = self.info["Serial No."]
             self.motor_type = self.info["Motor Type"]
 
+    def send_instruction_no_response(self, instruction, message=None):
+        self.controller.send_instruction_no_response(instruction, address=self.address, message=message)
+
     def send_instruction(self, instruction, message=None):
         """Sends an instruction to the motor. Returns the response from the motor."""
         response = self.controller.send_instruction(instruction, address=self.address, message=message)
 
         return response
 
-    # Action functions
-    def move(self, req="home", data=""):
-        """Wrapper function to easily enable access to movement.
-        Expects:
-        req - Name of request
-        data - Parameters to be sent after address and request
-        """
+    def move_no_response(self, req="home", data=""):
+        """Wrapper function to easily enable access to movement."""
         # Try to translate command to instruction
         if req in mov_:
             instruction = mov_[req]
@@ -58,7 +56,13 @@ class Motor:
         if instruction == b"ho":
             instruction = b"ho0"
 
-        status = self.send_instruction(instruction, message=data)
+        self.send_instruction_no_response(instruction, message=data)
+
+    # Action functions
+    def move(self, req="home", data=""):
+        self.move_no_response(req, data)
+        status = self.controller.read_response()
+
         if self.debug:
             move_check(status)  # TODO: make it return success as boolean?
         return status

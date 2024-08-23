@@ -18,6 +18,11 @@ class Rotator(Motor):
         angle = self.extract_angle_from_status(status)
         return angle
     
+    def set_angle_no_response(self, angle):
+        """Moves the rotator to a particular angle (in degrees)."""
+        position = self.angle_to_pos(angle)
+        self.move_no_response("absolute", position)
+    
     def set_angle_more(self, angle):
         """Moves the rotator to a particular angle (in degrees)."""
         position = self.angle_to_pos(angle)

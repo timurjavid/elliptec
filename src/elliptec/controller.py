@@ -71,9 +71,9 @@ class Controller:
                     self.last_position = status[1]
 
         return status
-
-    def send_instruction(self, instruction, address="0", message=None):
-        """Sends an instruction to the controller. Expects a response which is returned."""
+    
+    def send_instruction_no_response(self, instruction, address="0", message=None):
+        """Sends an instruction to the controller. Expects no response."""
         # Encode inputs
         addr = address.encode("utf-8")
         inst = instruction  # .encode('utf-8') # Already encoded
@@ -93,6 +93,10 @@ class Controller:
             print("TX:", command)
         # Execute the command and wait for a response
         self.s.write(command)  # This actually executes the command
+
+    def send_instruction(self, instruction, address="0", message=None):
+        """Sends an instruction to the controller. Expects a response which is returned."""
+        self.send_instruction_no_response(instruction, address, message)
         response = self.read_response()
 
         return response
